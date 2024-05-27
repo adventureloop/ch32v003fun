@@ -1433,7 +1433,8 @@ int _write(int fd, const char *buf, int size)
 	}
 	return size;
 }
-
+#undef putchar
+#if 0
 // single to debug intf
 int putchar(int c)
 {
@@ -1448,6 +1449,7 @@ int putchar(int c)
 	*DMDATA0 = 0x85 | ((const char)c<<8);
 	return 1;
 }
+#endif
 
 void SetupDebugPrintf()
 {

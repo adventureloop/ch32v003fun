@@ -16,6 +16,9 @@ else
 	ifeq ($(OS_NAME),linux)
 		LDFLAGS:=-lpthread -lusb-1.0 -ludev
 	endif
+	ifeq ($(OS_NAME),freebsd)
+		LDFLAGS:=-lpthread -lusb
+	endif
 	ifeq ($(OS_NAME),darwin)
 		LDFLAGS:=-lpthread -lusb-1.0 -framework CoreFoundation -framework IOKit
 		CFLAGS:=-O0 -Wall -Wno-asm-operand-widths -Wno-deprecated-declarations -Wno-deprecated-non-prototype -D__MACOSX__ -DCH32V003 -I.
@@ -32,10 +35,10 @@ minichlink.exe : $(C_S)
 	x86_64-w64-mingw32-gcc -o $@ $^ $(LDFLAGS) $(CFLAGS)
 
 minichlink : $(C_S)
-	gcc -o $@ $^ $(LDFLAGS) $(CFLAGS) $(INCS)
+	cc -o $@ $^ $(LDFLAGS) $(CFLAGS) $(INCS)
 
 minichlink.so : $(C_S)
-	gcc -o $@ $^ $(LDFLAGS) $(CFLAGS) $(INCS) -shared -fPIC
+	cc -o $@ $^ $(LDFLAGS) $(CFLAGS) $(INCS) -shared -fPIC
 
 minichlink.dll : $(C_S)
 	x86_64-w64-mingw32-gcc -o $@ $^ $(LDFLAGS) $(CFLAGS) $(INCS) -shared -DMINICHLINK_AS_LIBRARY

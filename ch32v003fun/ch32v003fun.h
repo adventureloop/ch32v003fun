@@ -12632,7 +12632,8 @@ static inline uint32_t __get_SP(void)
 
 // Depending on a LOT of factors, it's about 6 cycles per n.
 // **DO NOT send it zero or less.**
-#ifndef __MACOSX__
+//#ifndef __MACOSX__
+#if ! (defined(__MACOSX__) || defined(__FreeBSD__))
 static inline void Delay_Tiny( int n ) {
 	asm volatile( "\
 		mv a5, %[n]\n\
