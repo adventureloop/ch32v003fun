@@ -1,6 +1,11 @@
+#echo $(OS)
+
 # Default prefix for Windows
 ifeq ($(OS),Windows_NT)
     PREFIX?=riscv64-unknown-elf
+else ifeq ($(shell uname),FreeBSD)
+    PREFIX?=riscv64-none-elf
+    NEWLIB=/usr/local/arm-none-eabi/include
 # Check if riscv64-linux-gnu-gcc exists
 else ifneq ($(shell which riscv64-linux-gnu-gcc),)
     PREFIX?=riscv64-linux-gnu
@@ -171,7 +176,7 @@ CFLAGS+= \
 	-nostdlib \
 	-I. -Wall $(EXTRA_CFLAGS)
 
-LDFLAGS+=-T $(LINKER_SCRIPT) -Wl,--gc-sections
+LDFLAGS+=-T $(LINKER_SCRIPT) #-Wl,--gc-sections
 FILES_TO_COMPILE:=$(SYSTEM_C) $(TARGET).$(TARGET_EXT) $(ADDITIONAL_C_FILES) 
 
 $(TARGET).bin : $(TARGET).elf
@@ -201,8 +206,8 @@ gdbserver :
 	-$(MINICHLINK)/minichlink -baG
 
 clangd :
-	make clean
-	bear -- make build
+	$(MAKE) clean
+	bear -- $(MAKE) build
 	@echo "CompileFlags:" > .clangd
 	@echo "  Remove: [-march=*, -mabi=*]" >> .clangd
 
@@ -220,7 +225,7 @@ $(TARGET).elf : $(FILES_TO_COMPILE) $(LINKER_SCRIPT) $(EXTRA_ELF_DEPENDENCIES)
 	$(PREFIX)-gcc -o $@ $(FILES_TO_COMPILE) $(CFLAGS) $(LDFLAGS)
 
 cv_flash : $(TARGET).bin
-	make -C $(MINICHLINK) all
+	$(MAKE) -C $(MINICHLINK) all
 	$(FLASH_COMMAND)
 
 cv_clean :
