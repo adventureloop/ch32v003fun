@@ -1,4 +1,4 @@
-all : flash
+all : build
 
 TARGET:=chierp
 
